@@ -39,6 +39,7 @@ const MedicalRecordList: React.FC = () => {
           <p>Date: {record.date}</p>
           <p>Prescription: {record.prescription}</p>
           <p>Status: {record.status}</p>
+          <p>Files: {record.files.length} Files</p>
           {/* Display files and other record details */}
         </div>
       ))}

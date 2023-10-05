@@ -11,6 +11,8 @@ import NotFound from './components/auth/notFound';
 import EmergencyListForHospitals from './components/emergency/emergencyForHospitals';
 import MedicalRecordDetail from './components/records/recordDetail';
 import MedicalRecordList from './components/records/recordList';
+import PaymentRecordList from './components/payments/paymentList';
+import PaymentDetail from './components/payments/paymentDetail';
 
 function App(): JSX.Element {
   return (
@@ -27,6 +29,8 @@ function App(): JSX.Element {
           <Route path="/emergencies" element={<EmergencyListForHospitals />}/>
           <Route path='records' element={<MedicalRecordList />}/>
           <Route path='record/:id' element={<MedicalRecordDetail record={null} />}/>
+          <Route path='payments' element={<PaymentRecordList />}/>
+          <Route path='payment/:id' element={<PaymentDetail record={null}/>}/>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
