@@ -1,101 +1,176 @@
-
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import Header from './header';
 import { ENVDATA } from '../../config';
 
-import React, { useState } from 'react';
-import axios from 'axios';
-
-interface SignInResponse {
-  accessToken: string;
-  userId: string;
+interface SignInProps {
+  onSignInSuccess: any
 }
 
+const SignIn: React.FC<SignInProps> = ({ onSignInSuccess }) => {
+const navigation = [
+    { name: 'About', href: '/about' },
+    { name: 'Reviews', href: '/reviews' },
+    { name: 'Emergencies', href: 'emergency' },
+    { name: 'Contact Us', href: '/contact' },
+  ];
 
-export namespace Jesus {}
 
-const SignIn: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const test = {
+    name: 'Sign Up',
+    href: '/register',
+  };
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  // Initialize state for form data and validation
+  const [formData, setFormData] = useState<{
+    email: string;
+    password: string;
+  }>({
+    email: '',
+    password: '',
+  });
+
+  const [validations, setValidations] = useState<{
+    isEmailValid: boolean;
+    isPasswordValid: boolean;
+  }>({
+    isEmailValid: true,
+    isPasswordValid: true,
+  });
+
+  // Handle input change
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    // Perform input validations
+    let isEmailValid = true;
+    let isPasswordValid = true;
+
+    if (name === 'email') {
+      isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    } else if (name === 'password') {
+      isPasswordValid = value.length >= 8; // Modify as per your password requirements
+    }
+
+    // Update the validation state
+    setValidations({
+      ...validations,
+      isEmailValid,
+      isPasswordValid,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
+    // Check if the form data is valid
+    const isFormValid = validations.isEmailValid && validations.isPasswordValid;
+
+    if (!isFormValid) {
+      return;
+    }
+
     try {
-      const response = await axios.post<SignInResponse>(
-        ENVDATA.base_url + '/auth/signin'
-        , {
-        email,
-        password,
+      // Replace 'YOUR_SIGNIN_API_ENDPOINT' with your actual signin API endpoint
+      const url = ENVDATA + '/login';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
 
-      const { accessToken, userId } = response.data;
-
-      // Save the access token to local storage or a secure storage mechanism
-      localStorage.setItem('accessToken', accessToken);
-
-      // Optionally, you can save the user ID as well
-      localStorage.setItem('userId', userId);
-
-      // Handle success, e.g., redirect to the user's dashboard
-      // Replace '/dashboard' with your actual dashboard route
-      window.location.href = '/dashboard';
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const { response } = err;
-
-        if (response && response.status === 401) {
-          setError('Invalid email or password');
-        } else {
-          setError('An error occurred while signing in');
+      if (response.ok) {
+        onSignInSuccess( () => {
+          throw new Error('Function not implemented.');
+          alert('Sign in successful');
         }
+        );
+      } else if (response.status !== 200) {
+        alert(response.status + " " + response.statusText + " " + response.url + " " + response.body + " " + response.formData);
       }
+    } catch (error) {
+      alert('Sign in failed due to network error');
     }
   };
 
+  const isFormValid = validations.isEmailValid && validations.isPasswordValid;
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-4">Sign In</h2>
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        <form onSubmit={handleSignIn}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-600">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
-              required
-            />
+    <>
+      <div className='flex flex-col space-y-20 items-center justify-center min-h-screen h-[300px] bg-white text-black'>
+        <Header navigation={navigation} test={test} />
+        <div className="flex justify-center items-center h-screen mr-16">
+          <div className="w-3/4 max-w-md">
+            <div className="bg-white w-[550px] mt-12 h-[400px] p-8 ring-2 ring-black ring-opacity-50 rounded-lg shadow-lg">
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <h1 className="text-2xl font-bold mb-6 text-black text-center">Sign In</h1>
+                  <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 rounded-md border-2 border-black ${
+                      validations.isEmailValid ? 'border-white' : 'border-red-500'
+                    } focus:outline-none focus:border-blue-500`}
+                    required
+                  />
+                  {!validations.isEmailValid && (
+                    <p className="text-red-500 text-sm mt-1">Invalid email format</p>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 rounded-md border-2 border-black ${
+                      validations.isPasswordValid ? 'border-white' : 'border-red-500'
+                    } focus:outline-none focus:border-blue-500`}
+                    required
+                  />
+                  {!validations.isPasswordValid && (
+                    <p className="text-red-500 text-sm mt-1">Invalid password format</p>
+                  )}
+                </div>
+                <p className="text-gray-700 mt-4 text-right">
+                  Don't have an account?{' '}
+                  <a href="/register" className="text-blue-500 hover:underline">Register</a>
+                </p>
+
+                <div className="flex justify-center items-center mt-4">
+                  <button
+                    type="submit"
+                    className={`w-full px-3 py-2 rounded-md border text-white bg-black border-gray-300 text-xl focus:outline-none focus:border-blue-500`}
+                    disabled={!isFormValid}
+                  >
+                    Sign In
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-600">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none"
-          >
-            Sign In
-          </button>
-        </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
 export default SignIn;
+
