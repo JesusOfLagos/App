@@ -17,8 +17,28 @@ import EmergencyLayout from './components/emergency/emergencyLayout';
 import Profile from './components/auth/profile';
 import Contact from './components/page/contact';
 import VerifyOTP from './components/auth/verifyOTP';
+// import ScrollingExample from './components/utils/textModal';
+// import VerticallyCenter from './components/utils/textModal';
+// import {Modal, MyModalProps } from './components/utils/textModal';
+import Modal from './components/utils/textModal';
+import NestedModal from './components/utils/nestedModal';
+import CardLayout from './components/cards/cardLayout';
+import Test from './components/cards/test';
+
+
+
 
 function App(): JSX.Element {
+
+  const test = {
+    isOpen: true,
+    onClose: () => {
+      throw new Error('Function not implemented.');
+    },
+    title: 'jbknjhkjghfxfcghghjkjl;kjgfhjgxfcghvjb',
+    text:
+      'jhhhhhhhhhhhjffffffffffffffffffffffffffffffffffffffffffffffffffffjhhhhhhhhhhhjfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+  };
   return (
     <>
       <Router>
@@ -40,7 +60,10 @@ function App(): JSX.Element {
             throw new Error('Function not implemented.');
           } }/>} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/cards" element={<CardLayout />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/modal" element={<Modal isOpen={test.isOpen} onClose={test.onClose} title={test.title} text={test.text} />} />
+          <Route path="/modals" element={<NestedModal open={test.isOpen} onClose={test.onClose} title={test.title} text={test.text} />} />
           <Route path="/emergencies" element={<EmergencyListForHospitals />}/>
           <Route path="/emergency/:id" element={<EmergencyListForHospitals />}/>
           <Route path="/emergency" element={<EmergencyLayout />}/>
@@ -49,6 +72,7 @@ function App(): JSX.Element {
           <Route path='payments' element={<PaymentRecordList />}/>
           <Route path='payment/:id' element={<PaymentDetail record={null}/>}/>
           <Route path="*" element={<NotFound />} />
+          <Route path="/test" element={<Test />} />
         </Routes>
       </Router>
     </>

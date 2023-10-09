@@ -52,7 +52,7 @@ const navigation = [
     if (name === 'email') {
       isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     } else if (name === 'password') {
-      isPasswordValid = value.length >= 8; // Modify as per your password requirements
+      isPasswordValid = value.length >= 4; // Modify as per your password requirements
     }
 
     // Update the validation state
@@ -76,7 +76,7 @@ const navigation = [
 
     try {
       // Replace 'YOUR_SIGNIN_API_ENDPOINT' with your actual signin API endpoint
-      const url = ENVDATA + '/login';
+      const url = ENVDATA.base_url + '/login';
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -86,16 +86,22 @@ const navigation = [
       });
 
       if (response.ok) {
-        onSignInSuccess( () => {
-          throw new Error('Function not implemented.');
-          alert('Sign in successful');
-        }
-        );
-      } else if (response.status !== 200) {
+        // onSignInSuccess( () => {
+        //   alert('Sign in successful');
+        // }
+        // );
+        const data = await response.json();
+        console.log(data)
+      } else if (response.ok === false) {
+        console.log(url)
+        console.log(response)
+        console.log(response.status)
+        console.log(response.statusText)
+        console.log(FormData)
         alert(response.status + " " + response.statusText + " " + response.url + " " + response.body + " " + response.formData);
       }
     } catch (error) {
-      alert('Sign in failed due to network error');
+      console.log(`Sign in failed due to network error ${error}`)
     }
   };
 
