@@ -228,6 +228,7 @@
 
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import Header from './header';
+import { ENVDATA } from '../../config';
 
 interface SignUpProps {
   onSignUpSuccess: () => void;
@@ -320,7 +321,8 @@ const navigation = [
 
     try {
       // Replace 'YOUR_SIGNUP_API_ENDPOINT' with your actual signup API endpoint
-      const response = await fetch('YOUR_SIGNUP_API_ENDPOINT', {
+      const url = ENVDATA.base_url + '/register';
+      const response = await fetch( url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -456,3 +458,8 @@ const navigation = [
 
 export default SignUp;
 
+
+
+// connect your VR glasses to you health-ish acoount
+
+// Use Waymo Cars to get to your health-ish appointments
